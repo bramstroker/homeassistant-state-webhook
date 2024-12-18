@@ -2,5 +2,8 @@
   "domain": "state_webhook",
   "name": "State webhook",
   "version": "0.0.1",
-  "config_flow": true
+  "config_flow": true,
+   "codeowners": [
+    "@bramstroker"
+  ]
 }
