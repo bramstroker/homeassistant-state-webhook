@@ -4,7 +4,6 @@ from collections.abc import Generator
 import pytest
 from homeassistant import loader
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.area_registry import AreaRegistry
 from homeassistant.helpers.device_registry import DeviceRegistry
 from homeassistant.helpers.entity_registry import EntityRegistry
 from pytest_homeassistant_custom_component.common import (
@@ -39,12 +38,6 @@ def expected_lingering_timers() -> bool:
 def enable_custom_integrations(hass: HomeAssistant) -> None:
     """Enable custom integrations defined in the test dir."""
     hass.data.pop(loader.DATA_CUSTOM_COMPONENTS)
-
-
-@pytest.fixture
-def area_reg(hass: HomeAssistant) -> AreaRegistry:
-    """Return an empty, loaded, registry."""
-    return mock_area_registry(hass)
 
 
 @pytest.fixture

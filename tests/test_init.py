@@ -3,8 +3,8 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_registry import RegistryEntry
 from pytest_homeassistant_custom_component.common import MockConfigEntry, mock_registry
 
-from custom_components.state_webhook import CONF_ENTITY_DOMAIN, CONF_WEBHOOK_URL, DOMAIN, async_setup_entry
-
+from custom_components.state_webhook import CONF_ENTITY_DOMAIN, CONF_WEBHOOK_URL, async_setup_entry
+from custom_components.state_webhook.const import DOMAIN
 
 DEFAULT_WEBHOOK_URL = "https://example.com/webhook"
 
@@ -35,7 +35,7 @@ async def test_state_webhook_triggered_successfully(hass: HomeAssistant) -> None
         options={
             CONF_WEBHOOK_URL: DEFAULT_WEBHOOK_URL,
             CONF_ENTITY_DOMAIN: "input_boolean",
-        }
+        },
     )
 
     await async_setup_entry(hass, entry)
@@ -48,7 +48,7 @@ async def test_state_webhook_triggered_successfully(hass: HomeAssistant) -> None
 
         http_mock.assert_called_once_with(
             DEFAULT_WEBHOOK_URL,
-            method='POST',
-            json={'entity_id': 'input_boolean.test', 'new_state': 'off', 'old_state': 'on'},
-            headers={}
+            method="POST",
+            json={"entity_id": "input_boolean.test", "new_state": "off", "old_state": "on"},
+            headers={},
         )
