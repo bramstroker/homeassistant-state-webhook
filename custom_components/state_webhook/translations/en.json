@@ -18,6 +18,7 @@
       "filter": {
         "description": "Select which entities to track. Use one of the following options:",
         "data": {
+          "filter_mode": "Filter mode",
           "entity_domain": "Domain",
           "entity_labels": "Labels",
           "entity_id": "Entity ID",
@@ -52,6 +53,7 @@
       "filter": {
         "description": "Select which entities to track. Use one of the following options:",
         "data": {
+          "filter_mode": "Filter mode",
           "entity_domain": "Domain",
           "entity_labels": "Labels",
           "entity_id": "Entity ID",

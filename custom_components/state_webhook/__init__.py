@@ -14,9 +14,9 @@ from .const import (
     CONF_ENTITY_ID,
     CONF_ENTITY_ID_GLOB,
     CONF_ENTITY_LABELS,
-    CONF_WEBHOOK_AUTH_HEADER,
+    CONF_FILTER_MODE, CONF_WEBHOOK_AUTH_HEADER,
     CONF_WEBHOOK_HEADERS,
-    CONF_WEBHOOK_URL,
+    CONF_WEBHOOK_URL, FilterMode,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -79,24 +79,30 @@ async def register_webhook(hass: HomeAssistant, entry: ConfigEntry) -> None:
     async_track_state_change_event(hass, entities_to_track, handle_state_change)
 
 
-async def resolve_tracking_entities(hass: HomeAssistant, entry: ConfigEntry) -> list[str]:
-    """Resolve entities to track."""
+async def resolve_tracking_entities(hass: HomeAssistant, entry: ConfigEntry) -> set[str]:
+    """Resolve entities to track based on conditions"""
+    filter_mode: FilterMode = FilterMode(entry.options.get(CONF_FILTER_MODE, FilterMode.OR))
+
     entity_id_glob: str | None = entry.options.get(CONF_ENTITY_ID_GLOB)
-    if entity_id_glob:
-        return fnmatch.filter(hass.states.async_entity_ids(), entity_id_glob)
-
     entity_ids: list[str] | None = entry.options.get(CONF_ENTITY_ID)
-    if entity_ids:
-        return [entity_id for entity_id in hass.states.async_entity_ids() if entity_id in entity_ids]
-
     domain: str | None = entry.options.get(CONF_ENTITY_DOMAIN)
-    if domain:
-        return hass.states.async_entity_ids(domain)  # type: ignore
-
     labels: list[str] | None = entry.options.get(CONF_ENTITY_LABELS)
+
+    glob_entities = set(fnmatch.filter(hass.states.async_entity_ids(), entity_id_glob)) if entity_id_glob else set()
+    id_entities = set(
+        entity_id for entity_id in hass.states.async_entity_ids() if entity_id in entity_ids) if entity_ids else set()
+    domain_entities = set(hass.states.async_entity_ids(domain)) if domain else set()
+    label_entities = set()
+
     if labels:
         entity_registry = er.async_get(hass)
-        return [entity_id for entity_id, entity in entity_registry.entities.items() if
-                entity.labels and any(label in entity.labels for label in labels)]
+        label_entities = set(
+            entity_id for entity_id, entity in entity_registry.entities.items()
+            if entity.labels and any(label in entity.labels for label in labels)
+        )
 
-    return []
+    all_results = [glob_entities, id_entities, domain_entities, label_entities]
+    if filter_mode == FilterMode.AND:
+        return set.intersection(*(res for res in all_results if res))
+
+    return set.union(*all_results)

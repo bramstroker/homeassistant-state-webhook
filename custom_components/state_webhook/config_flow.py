@@ -23,6 +23,7 @@ from homeassistant.helpers.selector import (
     TextSelector,
 )
 
+from . import CONF_FILTER_MODE
 from .const import (
     CONF_ENTITY_DOMAIN,
     CONF_ENTITY_ID,
@@ -31,7 +32,7 @@ from .const import (
     CONF_WEBHOOK_AUTH_HEADER,
     CONF_WEBHOOK_HEADERS,
     CONF_WEBHOOK_URL,
-    DOMAIN,
+    DOMAIN, FilterMode,
 )
 
 WEBHOOK_SCHEMA = vol.Schema(
@@ -45,6 +46,7 @@ WEBHOOK_SCHEMA = vol.Schema(
 
 FILTER_SCHEMA = vol.Schema(
     {
+        vol.Required(CONF_FILTER_MODE, default=FilterMode.OR): SelectSelector(SelectSelectorConfig(options=[FilterMode.OR, FilterMode.AND])),
         vol.Optional(CONF_ENTITY_DOMAIN): SelectSelector(
             SelectSelectorConfig(
                 options=[cls.value for cls in Platform],
