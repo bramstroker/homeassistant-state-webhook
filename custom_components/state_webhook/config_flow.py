@@ -3,9 +3,8 @@ from typing import Any, Mapping
 import voluptuous as vol
 
 import homeassistant.helpers.config_validation as cv
-from config.custom_components.state_webhook import CONF_WEBHOOK_URL, DOMAIN
-from config.custom_components.state_webhook.const import CONF_ENTITY_DOMAIN, CONF_ENTITY_ID, CONF_ENTITY_ID_GLOB, \
-    CONF_ENTITY_LABELS, CONF_WEBHOOK_AUTH_HEADER, CONF_WEBHOOK_HEADERS
+from .const import CONF_ENTITY_DOMAIN, CONF_ENTITY_ID, CONF_ENTITY_ID_GLOB, \
+    CONF_ENTITY_LABELS, CONF_WEBHOOK_AUTH_HEADER, CONF_WEBHOOK_HEADERS, CONF_WEBHOOK_URL, DOMAIN
 from homeassistant.const import CONF_NAME, Platform
 from homeassistant.helpers.schema_config_entry_flow import SchemaCommonFlowHandler, SchemaConfigFlowHandler, \
     SchemaFlowError, SchemaFlowFormStep, SchemaFlowMenuStep
