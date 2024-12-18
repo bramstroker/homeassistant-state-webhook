@@ -1,3 +1,7 @@
+![Version](https://img.shields.io/github/v/release/bramstroker/homeassistant-state-webhook?style=for-the-badge)
+![Downloads](https://img.shields.io/github/downloads/bramstroker/homeassistant-state-webhook/total?style=for-the-badge)
+[![BuyMeACoffee](https://img.shields.io/badge/-buy_me_a%C2%A0coffee-gray?logo=buy-me-a-coffee&style=for-the-badge)](https://www.buymeacoffee.com/bramski)
+
 # State webhook
 
 Custom Home Assistant integration which allows you to sent state changes of entities to a webhook
