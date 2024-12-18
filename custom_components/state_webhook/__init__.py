@@ -61,7 +61,7 @@ async def register_webhook(hass: HomeAssistant, entry: ConfigEntry) -> None:
             "new_state": new_state.state if new_state else None,
         }
 
-        webhook_url = entry.options.get(CONF_WEBHOOK_URL)
+        webhook_url = str(entry.options.get(CONF_WEBHOOK_URL))
         headers = entry.options.get(CONF_WEBHOOK_HEADERS) or {}
         auth_header = entry.options.get(CONF_WEBHOOK_AUTH_HEADER)
         if auth_header:
@@ -91,7 +91,7 @@ async def resolve_tracking_entities(hass: HomeAssistant, entry: ConfigEntry) -> 
 
     domain: str | None = entry.options.get(CONF_ENTITY_DOMAIN)
     if domain:
-        return hass.states.async_entity_ids(domain)
+        return hass.states.async_entity_ids(domain)  # type: ignore
 
     labels: list[str] | None = entry.options.get(CONF_ENTITY_LABELS)
     if labels:
