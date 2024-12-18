@@ -1,0 +1,34 @@
+name: Test
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '**.py'
+  pull_request:
+    paths:
+      - '**.py'
+      - 'poetry.lock'
+
+jobs:
+  tests:
+    runs-on: "ubuntu-latest"
+    name: Run tests
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+      - uses: ./.github/workflows/poetry-composite-action
+      - name: Prepare test env
+        run: bash tests/setup.sh
+      - name: Run tests
+        run: |
+          poetry run pytest \
+            -qq \
+            --timeout=9 \
+            --durations=10 \
+            --cov custom_components.state_webhook \
+            --cov-report xml \
+            -o console_output_style=count \
+            -p no:sugar \
+            tests
+          poetry run coverage lcov
