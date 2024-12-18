@@ -14,14 +14,15 @@ import homeassistant.helpers.entity_registry as er
 
 _LOGGER = logging.getLogger(__name__)
 
-async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
+async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     async def _register_webhook(_: Any) -> None:
         await register_webhook(hass, entry)
 
     async_at_started(hass, _register_webhook)
 
     return True
+
 
 async def register_webhook(hass: HomeAssistant, entry: ConfigEntry) -> None:
     """Register webhook for state changes."""
@@ -66,6 +67,7 @@ async def register_webhook(hass: HomeAssistant, entry: ConfigEntry) -> None:
 
     async_track_state_change_event(hass, entities_to_track, handle_state_change)
 
+
 async def resolve_tracking_entities(hass: HomeAssistant, entry: ConfigEntry) -> list[str]:
     """Resolve entities to track."""
     entity_id_glob: str | None = entry.options.get(CONF_ENTITY_ID_GLOB)
@@ -83,6 +85,7 @@ async def resolve_tracking_entities(hass: HomeAssistant, entry: ConfigEntry) -> 
     labels: list[str] | None = entry.options.get(CONF_ENTITY_LABELS)
     if labels:
         entity_registry = er.async_get(hass)
-        return [entity_id for entity_id, entity in entity_registry.entities.items() if entity.labels and any(label in entity.labels for label in labels)]
+        return [entity_id for entity_id, entity in entity_registry.entities.items() if
+                entity.labels and any(label in entity.labels for label in labels)]
 
     return []
