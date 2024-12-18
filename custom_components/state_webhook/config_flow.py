@@ -3,11 +3,12 @@ from typing import Any, Mapping
 import voluptuous as vol
 
 import homeassistant.helpers.config_validation as cv
-from .const import CONF_ENTITY_DOMAIN, CONF_ENTITY_ID, CONF_ENTITY_ID_GLOB, \
-    CONF_ENTITY_LABELS, CONF_WEBHOOK_AUTH_HEADER, CONF_WEBHOOK_HEADERS, CONF_WEBHOOK_URL, DOMAIN
+from config.custom_components.state_webhook import CONF_WEBHOOK_URL, DOMAIN
+from config.custom_components.state_webhook.const import CONF_ENTITY_DOMAIN, CONF_ENTITY_ID, CONF_ENTITY_ID_GLOB, \
+    CONF_ENTITY_LABELS, CONF_WEBHOOK_AUTH_HEADER, CONF_WEBHOOK_HEADERS
 from homeassistant.const import CONF_NAME, Platform
 from homeassistant.helpers.schema_config_entry_flow import SchemaCommonFlowHandler, SchemaConfigFlowHandler, \
-    SchemaFlowError, SchemaFlowFormStep
+    SchemaFlowError, SchemaFlowFormStep, SchemaFlowMenuStep
 from homeassistant.helpers.selector import EntitySelector, EntitySelectorConfig, LabelSelector, LabelSelectorConfig, \
     ObjectSelector, \
     SelectSelector, \
@@ -15,7 +16,7 @@ from homeassistant.helpers.selector import EntitySelector, EntitySelectorConfig,
     SelectSelectorMode, \
     TextSelector
 
-CONFIG_SCHEMA = vol.Schema(
+WEBHOOK_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_NAME): TextSelector(),
         vol.Required(CONF_WEBHOOK_URL): TextSelector(),
@@ -24,7 +25,7 @@ CONFIG_SCHEMA = vol.Schema(
     }
 )
 
-CONFIG_SCHEMA_ENTITIES = vol.Schema(
+FILTER_SCHEMA = vol.Schema(
     {
         vol.Optional(CONF_ENTITY_DOMAIN): SelectSelector(
             SelectSelectorConfig(
@@ -49,12 +50,28 @@ async def validate_webhook(handler: SchemaCommonFlowHandler, user_input: dict[st
 
 CONFIG_FLOW = {
     "user": SchemaFlowFormStep(
-        CONFIG_SCHEMA,
-        next_step="entities",
+        WEBHOOK_SCHEMA,
+        next_step="filter",
         validate_user_input=validate_webhook
     ),
-    "entities": SchemaFlowFormStep(
-        CONFIG_SCHEMA_ENTITIES,
+    "filter": SchemaFlowFormStep(
+        FILTER_SCHEMA,
+    ),
+}
+
+OPTIONS_FLOW = {
+    "init": SchemaFlowMenuStep(
+        options={
+            "webhook",
+            "filter",
+        }
+    ),
+    "webhook": SchemaFlowFormStep(
+        WEBHOOK_SCHEMA,
+        validate_user_input=validate_webhook
+    ),
+    "filter": SchemaFlowFormStep(
+        FILTER_SCHEMA,
     ),
 }
 
@@ -64,6 +81,7 @@ class ConfigFlowHandler(SchemaConfigFlowHandler, domain=DOMAIN):
     MINOR_VERSION = 1
 
     config_flow = CONFIG_FLOW
+    options_flow = OPTIONS_FLOW
 
     def async_config_entry_title(self, options: Mapping[str, Any]) -> str:
         """Return config entry title."""

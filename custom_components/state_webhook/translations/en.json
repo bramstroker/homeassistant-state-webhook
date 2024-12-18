@@ -15,7 +15,41 @@
         },
         "title": "Webhook settings"
       },
-      "entities": {
+      "filter": {
+        "description": "Select which entities to track. Use one of the following options:",
+        "data": {
+          "entity_domain": "Domain",
+          "entity_labels": "Labels",
+          "entity_id": "Entity ID",
+          "entity_id_glob": "Entity ID glob"
+        },
+        "title": "Define which entities to track states for"
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "menu_options": {
+          "webhook": "Webhook options",
+          "filter": "Filter options"
+        }
+      },
+      "webhook": {
+        "data": {
+          "name": "Name",
+          "webhook_url": "Webhook URL",
+          "webhook_auth_header": "Authorization header",
+          "webhook_headers": "Additional headers"
+        },
+        "data_description": {
+          "webhook_url": "URL where state changes will be sent to using POST request",
+          "webhook_auth_header": "Authorization header to be sent with the request",
+          "webhook_headers": "Additional headers to be sent. Format: key1: value1 on each line"
+        },
+        "title": "Webhook settings"
+      },
+      "filter": {
         "description": "Select which entities to track. Use one of the following options:",
         "data": {
           "entity_domain": "Domain",
