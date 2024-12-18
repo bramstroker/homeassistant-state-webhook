@@ -1,0 +1,5 @@
+{
+  "name": "State webhook",
+  "zip_release": false,
+  "homeassistant": "2024.4.0"
+}

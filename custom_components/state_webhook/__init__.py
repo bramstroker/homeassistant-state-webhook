@@ -4,7 +4,7 @@ from typing import Any
 
 import aiohttp
 
-from config.custom_components.state_webhook.const import CONF_ENTITY_DOMAIN, CONF_ENTITY_ID, CONF_ENTITY_ID_GLOB, \
+from .const import CONF_ENTITY_DOMAIN, CONF_ENTITY_ID, CONF_ENTITY_ID_GLOB, \
     CONF_ENTITY_LABELS, CONF_WEBHOOK_AUTH_HEADER, CONF_WEBHOOK_HEADERS, CONF_WEBHOOK_URL, DOMAIN
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback

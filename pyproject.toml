@@ -1,0 +1,106 @@
+[project]
+name = "State webhook"
+description = "Custom Home Assistant component for state webhooks"
+maintainers = [
+  { name = "Bram Gerritsen", email = "bgerritsen@gmail.com" },
+]
+keywords = [
+  "homeassistant",
+  "custom-component",
+  "custom-integration",
+]
+classifiers = [
+  "Intended Audience :: End Users/Desktop",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3.13",
+]
+requires-python = ">=3.13.0"
+dependencies = ["homeassistant"]
+
+[tool.pytest.ini_options]
+testpaths = "tests"
+norecursedirs = ".git"
+asyncio_mode = "auto"
+markers = [
+    "skip_remote_loader_mocking: Do not mock globally registered remote loader mock",
+]
+log_level = "DEBUG"
+asyncio_default_fixture_loop_scope = "function"
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+
+[tool.mypy]
+python_version = "3.13"
+show_error_codes = true
+follow_imports = "silent"
+local_partial_types = true
+strict_equality = true
+no_implicit_optional = false
+warn_incomplete_stub = true
+warn_redundant_casts = true
+warn_unused_configs = true
+warn_unused_ignores = true
+check_untyped_defs = true
+disallow_incomplete_defs = true
+disallow_subclassing_any = true
+disallow_untyped_calls = true
+disallow_untyped_decorators = true
+disallow_untyped_defs = true
+warn_return_any = true
+warn_unreachable = true
+
+[[tool.mypy.overrides]]
+module = "homeassistant.components.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "custom_components.powercalc.state_power"
+disable_error_code = "return-value"
+
+[tool.coverage.paths]
+source = ["custom_components/state_power"]
+
+[tool.ruff]
+line-length = 150
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["A", "ANN", "ASYNC", "B", "BLE", "C", "C4", "COM", "E", "F", "FIX", "FURB", "G", "ICN", "I", "INP", "ISC", "LOG", "N", "NPY", "PERF", "PIE", "PYI", "Q", "RET", "RUF", "S", "SIM", "SLF", "SLOT", "T10", "T20", "TID", "UP", "W"]
+ignore = ["S101"]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 15
+
+[tool.poetry]
+name = "state_webhook"
+version = "0.1.0"
+description = "Powercalc HA custom component"
+authors = ["Bram Gerritsen <bgerritsen@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.group.docs]
+optional = true
+
+[tool.poetry.group.dev.dependencies]
+pre-commit = "^4.0.0"
+ruff = "^0.8.0"
+mypy = "1.13.0"
+voluptuous-stubs = "^0.1"
+homeassistant-stubs = "*"
+pytest-homeassistant-custom-component = "0.13.193"
+types-pytz = "^2024.1"
+types-croniter = "^2.0"
+croniter = "^5.0.0"
+pytest-cov = "^6.0"
+
+[tool.poetry.dependencies]
+python = ">=3.13,<3.14"
+aioresponses = "^0.7.6"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
