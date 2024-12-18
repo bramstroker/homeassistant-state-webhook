@@ -12,3 +12,8 @@ For each webhook you'd like to add go to "Devices & services", and click "Add in
 Or click the button below.
 
 [![Open your Home Assistant instance and start setting up a new integration.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=state_webhook)
+
+configuration screens:
+
+![alt text](https://github.com/bramstroker/homeassistant-state-webhook/blob/main/docs/assets/config_flow1.png?raw=true)
+![alt text](https://github.com/bramstroker/homeassistant-state-webhook/blob/main/docs/assets/config_flow2.png?raw=true)
