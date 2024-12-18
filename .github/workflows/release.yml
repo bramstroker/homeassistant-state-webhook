@@ -1,0 +1,30 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  release_zip_file:
+    name: Prepare release asset
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: "Set manifest version number"
+        run: |
+          python3 ${{ github.workspace }}/.github/scripts/update_hacs_manifest.py --version ${{ github.ref_name }}
+      - name: Set measure tool version number
+        run: 'echo ${{ steps.version.outputs.version }} > utils/measure/.VERSION'
+      - name: Create zip
+        run: |
+          cd custom_components/state_webhook
+          zip release.zip -r ./
+      - name: Upload zip to release
+        uses: svenstaro/upload-release-action@v1-release
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ./custom_components/state_webhook/release.zip
+          asset_name: release.zip
+          tag: ${{ github.ref }}
+          overwrite: true
