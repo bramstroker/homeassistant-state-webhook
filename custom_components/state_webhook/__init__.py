@@ -39,7 +39,10 @@ async def register_webhook(hass: HomeAssistant, entry: ConfigEntry) -> None:
         _LOGGER.warning("No entities found to track")
         return
 
-    _LOGGER.debug("Start webhook tracking using URL: %s", entry.options.get(CONF_WEBHOOK_URL))
+    webhook_url = str(entry.options.get(CONF_WEBHOOK_URL))
+    headers = prepare_headers(entry)
+
+    _LOGGER.debug("Start webhook tracking using URL: %s", webhook_url)
     _LOGGER.debug("Tracking the following entities: %s", entities_to_track)
 
     @callback
@@ -57,15 +60,11 @@ async def register_webhook(hass: HomeAssistant, entry: ConfigEntry) -> None:
 
         payload = {
             "entity_id": entity_id,
+            "time": new_state.last_updated.isoformat(),
             "old_state": old_state.state if old_state else None,
             "new_state": new_state.state if new_state else None,
         }
 
-        webhook_url = str(entry.options.get(CONF_WEBHOOK_URL))
-        headers = entry.options.get(CONF_WEBHOOK_HEADERS) or {}
-        auth_header = entry.options.get(CONF_WEBHOOK_AUTH_HEADER)
-        if auth_header:
-            headers["Authorization"] = auth_header
         async with aiohttp.ClientSession() as session:
             try:
                 async with session.post(webhook_url, json=payload, headers=headers) as response:
@@ -78,6 +77,13 @@ async def register_webhook(hass: HomeAssistant, entry: ConfigEntry) -> None:
 
     async_track_state_change_event(hass, entities_to_track, handle_state_change)
 
+def prepare_headers(entry: ConfigEntry) -> dict[str, str]:
+    """Prepare headers for webhook request"""
+    headers = entry.options.get(CONF_WEBHOOK_HEADERS) or {}
+    auth_header = entry.options.get(CONF_WEBHOOK_AUTH_HEADER)
+    if auth_header:
+        headers["Authorization"] = auth_header
+    return headers
 
 async def resolve_tracking_entities(hass: HomeAssistant, entry: ConfigEntry) -> set[str]:
     """Resolve entities to track based on conditions"""

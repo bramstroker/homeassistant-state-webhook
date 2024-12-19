@@ -1,3 +1,5 @@
+from unittest.mock import ANY
+
 from aioresponses import aioresponses
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_registry import RegistryEntry
@@ -49,6 +51,6 @@ async def test_state_webhook_triggered_successfully(hass: HomeAssistant) -> None
         http_mock.assert_called_once_with(
             DEFAULT_WEBHOOK_URL,
             method="POST",
-            json={"entity_id": "input_boolean.test", "new_state": "off", "old_state": "on"},
+            json={"entity_id": "input_boolean.test", "time": ANY, "new_state": "off", "old_state": "on"},
             headers={},
         )
