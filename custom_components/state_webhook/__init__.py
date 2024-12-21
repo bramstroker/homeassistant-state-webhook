@@ -1,5 +1,6 @@
 import fnmatch
 import logging
+from collections.abc import Mapping
 from typing import Any
 
 import aiohttp
@@ -14,9 +15,11 @@ from .const import (
     CONF_ENTITY_ID,
     CONF_ENTITY_ID_GLOB,
     CONF_ENTITY_LABELS,
-    CONF_FILTER_MODE, CONF_WEBHOOK_AUTH_HEADER,
+    CONF_FILTER_MODE,
+    CONF_WEBHOOK_AUTH_HEADER,
     CONF_WEBHOOK_HEADERS,
-    CONF_WEBHOOK_URL, FilterMode,
+    CONF_WEBHOOK_URL,
+    FilterMode,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -40,7 +43,7 @@ async def register_webhook(hass: HomeAssistant, entry: ConfigEntry) -> None:
         return
 
     webhook_url = str(entry.options.get(CONF_WEBHOOK_URL))
-    headers = prepare_headers(entry)
+    headers = prepare_headers(entry.options)
 
     _LOGGER.debug("Start webhook tracking using URL: %s", webhook_url)
     _LOGGER.debug("Tracking the following entities: %s", entities_to_track)
@@ -66,21 +69,29 @@ async def register_webhook(hass: HomeAssistant, entry: ConfigEntry) -> None:
         }
 
         async with aiohttp.ClientSession() as session:
-            try:
-                async with session.post(webhook_url, json=payload, headers=headers) as response:
-                    if response.status == 200:
-                        _LOGGER.debug("Webhook successfully sent for %s", entity_id)
-                    else:
-                        _LOGGER.error("Webhook failed for %s, HTTP status: %d", entity_id, response.status)
-            except Exception as e:  # noqa BLE001
-                _LOGGER.error("Error sending webhook for %s: %s", entity_id, e)
+            await call_webhook(session, webhook_url, headers, payload)
 
     async_track_state_change_event(hass, entities_to_track, handle_state_change)
 
-def prepare_headers(entry: ConfigEntry) -> dict[str, str]:
+async def call_webhook(session: aiohttp.ClientSession, webhook_url: str, headers: Mapping[str, str], payload: dict[str, Any]) -> bool:
+    """Call webhook with custom payload"""
+
+    _LOGGER.debug("Calling webhook using URL: %s", webhook_url)
+
+    try:
+        async with session.post(webhook_url, json=payload, headers=headers) as response:
+            if 200 <= response.status < 300:
+                _LOGGER.debug("Webhook successfully called")
+                return True
+            _LOGGER.error("Webhook failed, HTTP status: %d", response.status)
+    except Exception as e:  # noqa BLE001
+        _LOGGER.error("Error calling webhook: %s", e)
+    return False
+
+def prepare_headers(options: Mapping[str, Any]) -> dict[str, str]:
     """Prepare headers for webhook request"""
-    headers = entry.options.get(CONF_WEBHOOK_HEADERS) or {}
-    auth_header = entry.options.get(CONF_WEBHOOK_AUTH_HEADER)
+    headers = options.get(CONF_WEBHOOK_HEADERS) or {}
+    auth_header = options.get(CONF_WEBHOOK_AUTH_HEADER)
     if auth_header:
         headers["Authorization"] = auth_header
     return headers
@@ -95,17 +106,16 @@ async def resolve_tracking_entities(hass: HomeAssistant, entry: ConfigEntry) -> 
     labels: list[str] | None = entry.options.get(CONF_ENTITY_LABELS)
 
     glob_entities = set(fnmatch.filter(hass.states.async_entity_ids(), entity_id_glob)) if entity_id_glob else set()
-    id_entities = set(
-        entity_id for entity_id in hass.states.async_entity_ids() if entity_id in entity_ids) if entity_ids else set()
+    id_entities = {entity_id for entity_id in hass.states.async_entity_ids() if entity_id in entity_ids} if entity_ids else set()
     domain_entities = set(hass.states.async_entity_ids(domain)) if domain else set()
     label_entities = set()
 
     if labels:
         entity_registry = er.async_get(hass)
-        label_entities = set(
+        label_entities = {
             entity_id for entity_id, entity in entity_registry.entities.items()
             if entity.labels and any(label in entity.labels for label in labels)
-        )
+        }
 
     all_results = [glob_entities, id_entities, domain_entities, label_entities]
     if filter_mode == FilterMode.AND:
