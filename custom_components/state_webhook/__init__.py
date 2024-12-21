@@ -73,7 +73,7 @@ async def register_webhook(hass: HomeAssistant, entry: ConfigEntry) -> None:
 
     async_track_state_change_event(hass, entities_to_track, handle_state_change)
 
-async def call_webhook(session, webhook_url: str, headers, payload: dict[str, Any]) -> bool:
+async def call_webhook(session: aiohttp.ClientSession, webhook_url: str, headers: Mapping[str, str], payload: dict[str, Any]) -> bool:
     """Call webhook with custom payload"""
 
     _LOGGER.debug("Calling webhook using URL: %s", webhook_url)
@@ -106,17 +106,16 @@ async def resolve_tracking_entities(hass: HomeAssistant, entry: ConfigEntry) -> 
     labels: list[str] | None = entry.options.get(CONF_ENTITY_LABELS)
 
     glob_entities = set(fnmatch.filter(hass.states.async_entity_ids(), entity_id_glob)) if entity_id_glob else set()
-    id_entities = set(
-        entity_id for entity_id in hass.states.async_entity_ids() if entity_id in entity_ids) if entity_ids else set()
+    id_entities = {entity_id for entity_id in hass.states.async_entity_ids() if entity_id in entity_ids} if entity_ids else set()
     domain_entities = set(hass.states.async_entity_ids(domain)) if domain else set()
     label_entities = set()
 
     if labels:
         entity_registry = er.async_get(hass)
-        label_entities = set(
+        label_entities = {
             entity_id for entity_id, entity in entity_registry.entities.items()
             if entity.labels and any(label in entity.labels for label in labels)
-        )
+        }
 
     all_results = [glob_entities, id_entities, domain_entities, label_entities]
     if filter_mode == FilterMode.AND:
