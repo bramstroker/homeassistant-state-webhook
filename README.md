@@ -23,11 +23,12 @@ configuration screens:
 
 ## Payload
 
-Currently the component will sent following payload using POST request to the configured endpoint:
+Currently the component will sent following payload structure using POST request to the configured endpoint:
 
 ```json
 {
   "entity_id": "person.some",
+  "time": "2024-12-19T12:27:05.854243+00:00",
   "old_state": "home",
   "new_state": "not_home"
 }
