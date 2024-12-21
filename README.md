@@ -9,6 +9,20 @@ Essentially you set up a webhook URL, with optionally authorization headers.
 In addition you configure the entities which you want to track.
 The component will listen to state changes of relevant entities and will call your webhook accordingly.
 
+## Installation
+
+### HACS (manually)
+
+Currently you'll need to add custom repository to HACS.
+I will try to add this integration to HACS default repository, but this will take a lot of time looking at the big backlog.
+
+- In the HACS GUI, click three dots (top right), select "Custom repositories"
+- Enter the following repository URL: [https://github.com/bramstroker/homeassistant-state-webhook](https://github.com/bramstroker/homeassistant-state-webhook)
+- Category: Integration
+- Search for "state webhook"
+- Click and "Download"
+- Restart Home Assistant
+
 ## Usage
 
 For each webhook you'd like to add go to "Devices & services", and click "Add integration", search for `State webhook` and follow the instructions.
