@@ -72,7 +72,7 @@ FILTER_SCHEMA = vol.Schema(
 
 async def validate_webhook(handler: SchemaCommonFlowHandler, user_input: dict[str, Any]) -> dict[str, Any]:
     try:
-        url = user_input.get(CONF_WEBHOOK_URL)
+        url = str(user_input.get(CONF_WEBHOOK_URL))
         cv.url(url)
     except vol.Invalid as err:
         raise SchemaFlowError("Invalid URL") from err
