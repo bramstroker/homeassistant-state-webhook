@@ -1,13 +1,13 @@
 {
   "domain": "state_webhook",
   "name": "State webhook",
-  "version": "0.0.1",
-  "config_flow": true,
   "codeowners": [],
+  "config_flow": true,
   "dependencies": [],
+  "documentation": "https://github.com/bramstroker/homeassistant-state-webhook",
   "integration_type": "service",
   "iot_class": "cloud_push",
+  "issue_tracker": "https://github.com/bramstroker/homeassistant-state-webhook/issues",
   "requirements": [],
-  "documentation": "https://github.com/bramstroker/homeassistant-state-webhook",
-  "issue_tracker": "https://github.com/bramstroker/homeassistant-state-webhook/issues"
+  "version": "0.0.1"
 }
