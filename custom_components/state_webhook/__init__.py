@@ -1,6 +1,7 @@
 import fnmatch
 import logging
-from typing import Any, Mapping
+from collections.abc import Mapping
+from typing import Any
 
 import aiohttp
 import homeassistant.helpers.entity_registry as er
@@ -14,9 +15,11 @@ from .const import (
     CONF_ENTITY_ID,
     CONF_ENTITY_ID_GLOB,
     CONF_ENTITY_LABELS,
-    CONF_FILTER_MODE, CONF_WEBHOOK_AUTH_HEADER,
+    CONF_FILTER_MODE,
+    CONF_WEBHOOK_AUTH_HEADER,
     CONF_WEBHOOK_HEADERS,
-    CONF_WEBHOOK_URL, FilterMode,
+    CONF_WEBHOOK_URL,
+    FilterMode,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -80,8 +83,7 @@ async def call_webhook(session, webhook_url: str, headers, payload: dict[str, An
             if 200 <= response.status < 300:
                 _LOGGER.debug("Webhook successfully called")
                 return True
-            else:
-                _LOGGER.error("Webhook failed, HTTP status: %d", response.status)
+            _LOGGER.error("Webhook failed, HTTP status: %d", response.status)
     except Exception as e:  # noqa BLE001
         _LOGGER.error("Error calling webhook: %s", e)
     return False

@@ -34,7 +34,8 @@ from .const import (
     CONF_WEBHOOK_AUTH_HEADER,
     CONF_WEBHOOK_HEADERS,
     CONF_WEBHOOK_URL,
-    DOMAIN, FilterMode,
+    DOMAIN,
+    FilterMode,
 )
 
 WEBHOOK_OPTIONS_SCHEMA = vol.Schema(

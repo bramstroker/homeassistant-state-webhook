@@ -1,20 +1,17 @@
-from unittest.mock import ANY, MagicMock
+from unittest.mock import MagicMock
 
 import pytest
-from aiohttp import ClientError, TooManyRedirects
-from aiohttp.http_exceptions import BadHttpMessage, HttpProcessingError
+from aiohttp import ClientError
+from aiohttp.http_exceptions import BadHttpMessage
 from aioresponses import aioresponses
 from homeassistant import config_entries
 from homeassistant.const import CONF_NAME
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
-from homeassistant.helpers.entity_registry import RegistryEntry
-from homeassistant.helpers.schema_config_entry_flow import SchemaCommonFlowHandler, SchemaConfigFlowHandler, \
-    SchemaFlowError
-from pytest_homeassistant_custom_component.common import MockConfigEntry, mock_registry
+from homeassistant.helpers.schema_config_entry_flow import SchemaFlowError
+from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.state_webhook import CONF_ENTITY_DOMAIN, CONF_ENTITY_ID, CONF_FILTER_MODE, CONF_WEBHOOK_URL, \
-    async_setup_entry
+from custom_components.state_webhook import CONF_ENTITY_DOMAIN, CONF_ENTITY_ID, CONF_FILTER_MODE, CONF_WEBHOOK_URL
 from custom_components.state_webhook.config_flow import validate_webhook
 from custom_components.state_webhook.const import DOMAIN, FilterMode
 
@@ -27,37 +24,37 @@ async def test_validate_url() -> None:
 
 async def test_validate_connection_invalid_status() -> None:
     with aioresponses() as m:
-        m.post('http://example.com', status=500)
+        m.post("http://example.com", status=500)
         with pytest.raises(SchemaFlowError):
             await validate_webhook(MagicMock(), {
-                CONF_WEBHOOK_URL: 'http://example.com',
+                CONF_WEBHOOK_URL: "http://example.com",
             })
 
 async def test_validate_connection_http_error() -> None:
     with aioresponses() as m:
-        m.post('http://example.com', exception=BadHttpMessage("test"))
+        m.post("http://example.com", exception=BadHttpMessage("test"))
         with pytest.raises(SchemaFlowError):
             await validate_webhook(MagicMock(), {
-                CONF_WEBHOOK_URL: 'http://example.com',
+                CONF_WEBHOOK_URL: "http://example.com",
             })
 
 async def test_validate_connection_client_error() -> None:
     with aioresponses() as m:
-        m.post('http://example.com', exception=ClientError("test"))
+        m.post("http://example.com", exception=ClientError("test"))
         with pytest.raises(SchemaFlowError):
             await validate_webhook(MagicMock(), {
-                CONF_WEBHOOK_URL: 'http://example.com',
+                CONF_WEBHOOK_URL: "http://example.com",
             })
 
 async def test_config_flow(hass: HomeAssistant) -> None:
     result = await hass.config_entries.flow.async_init(
-        DOMAIN, context={"source": config_entries.SOURCE_USER}
+        DOMAIN, context={"source": config_entries.SOURCE_USER},
     )
     assert result["type"] is FlowResultType.FORM
     assert result["errors"] is None
 
     with aioresponses() as m:
-        m.post('http://example.com', status=200)
+        m.post("http://example.com", status=200)
         result = await hass.config_entries.flow.async_configure(
             result["flow_id"],
             {
@@ -91,7 +88,7 @@ async def test_options_flow(hass: HomeAssistant) -> None:
             CONF_WEBHOOK_URL: "http://example.com",
             CONF_FILTER_MODE: FilterMode.OR,
             CONF_ENTITY_DOMAIN: "sensor",
-            CONF_ENTITY_ID: ["sensor.test"]
+            CONF_ENTITY_ID: ["sensor.test"],
         },
     )
 
@@ -114,7 +111,7 @@ async def test_options_flow(hass: HomeAssistant) -> None:
     assert result["type"] is FlowResultType.FORM
 
     with aioresponses() as m:
-        m.post('http://example2.com', status=200)
+        m.post("http://example2.com", status=200)
         result = await hass.config_entries.options.async_configure(
             result["flow_id"],
             {
