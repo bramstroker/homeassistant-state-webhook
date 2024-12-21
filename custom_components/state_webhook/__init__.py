@@ -1,6 +1,6 @@
 import fnmatch
 import logging
-from typing import Any
+from typing import Any, Mapping
 
 import aiohttp
 import homeassistant.helpers.entity_registry as er
@@ -40,7 +40,7 @@ async def register_webhook(hass: HomeAssistant, entry: ConfigEntry) -> None:
         return
 
     webhook_url = str(entry.options.get(CONF_WEBHOOK_URL))
-    headers = prepare_headers(entry)
+    headers = prepare_headers(entry.options)
 
     _LOGGER.debug("Start webhook tracking using URL: %s", webhook_url)
     _LOGGER.debug("Tracking the following entities: %s", entities_to_track)
@@ -66,21 +66,30 @@ async def register_webhook(hass: HomeAssistant, entry: ConfigEntry) -> None:
         }
 
         async with aiohttp.ClientSession() as session:
-            try:
-                async with session.post(webhook_url, json=payload, headers=headers) as response:
-                    if response.status == 200:
-                        _LOGGER.debug("Webhook successfully sent for %s", entity_id)
-                    else:
-                        _LOGGER.error("Webhook failed for %s, HTTP status: %d", entity_id, response.status)
-            except Exception as e:  # noqa BLE001
-                _LOGGER.error("Error sending webhook for %s: %s", entity_id, e)
+            await call_webhook(session, webhook_url, headers, payload)
 
     async_track_state_change_event(hass, entities_to_track, handle_state_change)
 
-def prepare_headers(entry: ConfigEntry) -> dict[str, str]:
+async def call_webhook(session, webhook_url: str, headers, payload: dict[str, Any]) -> bool:
+    """Call webhook with custom payload"""
+
+    _LOGGER.debug("Calling webhook using URL: %s", webhook_url)
+
+    try:
+        async with session.post(webhook_url, json=payload, headers=headers) as response:
+            if 200 <= response.status < 300:
+                _LOGGER.debug("Webhook successfully called")
+                return True
+            else:
+                _LOGGER.error("Webhook failed, HTTP status: %d", response.status)
+    except Exception as e:  # noqa BLE001
+        _LOGGER.error("Error calling webhook: %s", e)
+    return False
+
+def prepare_headers(options: Mapping[str, Any]) -> dict[str, str]:
     """Prepare headers for webhook request"""
-    headers = entry.options.get(CONF_WEBHOOK_HEADERS) or {}
-    auth_header = entry.options.get(CONF_WEBHOOK_AUTH_HEADER)
+    headers = options.get(CONF_WEBHOOK_HEADERS) or {}
+    auth_header = options.get(CONF_WEBHOOK_AUTH_HEADER)
     if auth_header:
         headers["Authorization"] = auth_header
     return headers

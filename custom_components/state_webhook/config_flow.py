@@ -1,6 +1,8 @@
 from collections.abc import Mapping
+from datetime import datetime
 from typing import Any
 
+import aiohttp
 import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
 from homeassistant.const import CONF_NAME, Platform
@@ -23,7 +25,7 @@ from homeassistant.helpers.selector import (
     TextSelector,
 )
 
-from . import CONF_FILTER_MODE
+from . import CONF_FILTER_MODE, prepare_headers
 from .const import (
     CONF_ENTITY_DOMAIN,
     CONF_ENTITY_ID,
@@ -35,18 +37,25 @@ from .const import (
     DOMAIN, FilterMode,
 )
 
-WEBHOOK_SCHEMA = vol.Schema(
+WEBHOOK_OPTIONS_SCHEMA = vol.Schema(
     {
-        vol.Required(CONF_NAME): TextSelector(),
         vol.Required(CONF_WEBHOOK_URL): TextSelector(),
         vol.Optional(CONF_WEBHOOK_AUTH_HEADER): TextSelector(),
         vol.Optional(CONF_WEBHOOK_HEADERS): ObjectSelector(),
     },
 )
 
+WEBHOOK_SCHEMA = vol.Schema(
+    {
+        vol.Required(CONF_NAME): TextSelector(),
+        **WEBHOOK_OPTIONS_SCHEMA.schema,
+    },
+)
+
 FILTER_SCHEMA = vol.Schema(
     {
-        vol.Required(CONF_FILTER_MODE, default=FilterMode.OR): SelectSelector(SelectSelectorConfig(options=[FilterMode.OR, FilterMode.AND])),
+        vol.Required(CONF_FILTER_MODE, default=FilterMode.OR): SelectSelector(
+            SelectSelectorConfig(options=[FilterMode.OR, FilterMode.AND])),
         vol.Optional(CONF_ENTITY_DOMAIN): SelectSelector(
             SelectSelectorConfig(
                 options=[cls.value for cls in Platform],
@@ -59,14 +68,31 @@ FILTER_SCHEMA = vol.Schema(
     },
 )
 
+
 async def validate_webhook(handler: SchemaCommonFlowHandler, user_input: dict[str, Any]) -> dict[str, Any]:
     try:
         url = user_input.get(CONF_WEBHOOK_URL)
-        if url:
-            cv.url(url)
+        cv.url(url)
     except vol.Invalid as err:
         raise SchemaFlowError("Invalid URL") from err
+
+    async with aiohttp.ClientSession() as session:
+        try:
+            test_payload = {
+                "entity_id": "sensor.connection_test",
+                "time": datetime.now().isoformat(),
+                "old_state": "test_old",
+                "new_state": "test_new",
+            }
+
+            async with session.post(url, headers=prepare_headers(user_input), json=test_payload) as resp:
+                if resp.status < 200 or resp.status >= 300:
+                    raise SchemaFlowError(f"Invalid response code: {resp.status}")
+        except Exception as err:
+            raise SchemaFlowError(f"Error connecting to URL: {err}") from err
+
     return user_input
+
 
 CONFIG_FLOW = {
     "user": SchemaFlowFormStep(
@@ -87,13 +113,14 @@ OPTIONS_FLOW = {
         },
     ),
     "webhook": SchemaFlowFormStep(
-        WEBHOOK_SCHEMA,
+        WEBHOOK_OPTIONS_SCHEMA,
         validate_user_input=validate_webhook,
     ),
     "filter": SchemaFlowFormStep(
         FILTER_SCHEMA,
     ),
 }
+
 
 class ConfigFlowHandler(SchemaConfigFlowHandler, domain=DOMAIN):
     """Handle a config or options flow for Threshold."""
