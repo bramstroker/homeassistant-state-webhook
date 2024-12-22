@@ -1,5 +1,8 @@
 ![Version](https://img.shields.io/github/v/release/bramstroker/homeassistant-state-webhook?style=for-the-badge)
 ![Downloads](https://img.shields.io/github/downloads/bramstroker/homeassistant-state-webhook/total?style=for-the-badge)
+[![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg?style=for-the-badge)](https://github.com/hacs/integration)
+[![Code style: MyPy](https://img.shields.io/badge/type%20checked-mypy-blue.svg?style=for-the-badge)](https://mypy-lang.org/)
+[![Coverage Status](https://img.shields.io/coveralls/github/bramstroker/homeassistant-state-webhook/badge.svg?branch=master&style=for-the-badge)](https://coveralls.io/github/bramstroker/homeassistant-state-webhook?branch=main)
 [![BuyMeACoffee](https://img.shields.io/badge/-buy_me_a%C2%A0coffee-gray?logo=buy-me-a-coffee&style=for-the-badge)](https://www.buymeacoffee.com/bramski)
 
 # State webhook
