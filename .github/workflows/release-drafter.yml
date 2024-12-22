@@ -1,5 +1,8 @@
 name: Release Drafter
 
+permissions:
+  contents: read
+
 on:
   push:
     branches:
@@ -9,6 +12,9 @@ on:
 
 jobs:
   update_release_draft:
+    permissions:
+      contents: write
+      pull-requests: write
     name: Update release draft
     runs-on: ubuntu-latest
     steps:
@@ -19,6 +25,6 @@ jobs:
       - name: Create Release
         uses: release-drafter/release-drafter@v6
         with:
-          disable-releaser: github.ref != 'refs/heads/main'
+          commitish: refs/heads/main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

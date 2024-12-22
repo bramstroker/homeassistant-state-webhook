@@ -4,11 +4,13 @@
       "user": {
         "data": {
           "name": "Name",
+          "retry_limit": "Retry limit",
           "webhook_url": "Webhook URL",
           "webhook_auth_header": "Authorization header",
           "webhook_headers": "Additional headers"
         },
         "data_description": {
+          "retry_limit": "Number of times to retry sending the webhook, with a delay of 5 seconds between each retry",
           "webhook_url": "URL where state changes will be sent to using POST request",
           "webhook_auth_header": "Authorization header to be sent with the request",
           "webhook_headers": "Additional headers to be sent. Format: key1: value1 on each line"
@@ -48,11 +50,13 @@
       "webhook": {
         "data": {
           "name": "Name",
+          "retry_limit": "Retry limit",
           "webhook_url": "Webhook URL",
           "webhook_auth_header": "Authorization header",
           "webhook_headers": "Additional headers"
         },
         "data_description": {
+          "retry_limit": "Number of times to retry sending the webhook, with a delay of 5 seconds between each retry",
           "webhook_url": "URL where state changes will be sent to using POST request",
           "webhook_auth_header": "Authorization header to be sent with the request",
           "webhook_headers": "Additional headers to be sent. Format: key1: value1 on each line"

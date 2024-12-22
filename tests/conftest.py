@@ -1,5 +1,6 @@
 import asyncio
 from collections.abc import Generator
+from unittest.mock import patch
 
 import pytest
 from homeassistant import loader
@@ -50,3 +51,9 @@ def device_reg(hass: HomeAssistant) -> DeviceRegistry:
 def entity_reg(hass: HomeAssistant) -> EntityRegistry:
     """Return an empty, loaded, registry."""
     return mock_registry(hass)
+
+
+@pytest.fixture(autouse=True)
+def patch_retry_delay() -> Generator:
+    with patch("custom_components.state_webhook.RETRY_DELAY", 0):
+        yield
