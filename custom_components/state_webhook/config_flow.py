@@ -1,5 +1,6 @@
 from collections.abc import Mapping
 from datetime import datetime
+from enum import StrEnum
 from typing import Any
 
 import aiohttp
@@ -77,7 +78,15 @@ PAYLOAD_SCHEMA = vol.Schema(
     },
 )
 
+class Step(StrEnum):
+    USER = "user"
+    INIT = "init"
+    WEBHOOK = "webhook"
+    FILTER = "filter"
+    PAYLOAD = "payload"
+
 async def validate_webhook(handler: SchemaCommonFlowHandler, user_input: dict[str, Any]) -> dict[str, Any]:
+    """Validate webhook URL and connection."""
     try:
         url = str(user_input.get(CONF_WEBHOOK_URL))
         cv.url(url)
@@ -103,43 +112,43 @@ async def validate_webhook(handler: SchemaCommonFlowHandler, user_input: dict[st
 
 
 CONFIG_FLOW = {
-    "user": SchemaFlowFormStep(
+    Step.USER: SchemaFlowFormStep(
         WEBHOOK_SCHEMA,
-        next_step="filter",
+        next_step=Step.FILTER,
         validate_user_input=validate_webhook,
     ),
-    "filter": SchemaFlowFormStep(
+    Step.FILTER: SchemaFlowFormStep(
         FILTER_SCHEMA,
-        next_step="payload",
+        next_step=Step.PAYLOAD,
     ),
-    "payload": SchemaFlowFormStep(
+    Step.PAYLOAD: SchemaFlowFormStep(
         PAYLOAD_SCHEMA,
     ),
 }
 
 OPTIONS_FLOW = {
-    "init": SchemaFlowMenuStep(
+    Step.INIT: SchemaFlowMenuStep(
         options={
-            "webhook",
-            "filter",
-            "payload",
+            Step.WEBHOOK,
+            Step.FILTER,
+            Step.PAYLOAD,
         },
     ),
-    "webhook": SchemaFlowFormStep(
+    Step.WEBHOOK: SchemaFlowFormStep(
         WEBHOOK_OPTIONS_SCHEMA,
         validate_user_input=validate_webhook,
     ),
-    "filter": SchemaFlowFormStep(
+    Step.FILTER: SchemaFlowFormStep(
         FILTER_SCHEMA,
     ),
-    "payload": SchemaFlowFormStep(
+    Step.PAYLOAD: SchemaFlowFormStep(
         PAYLOAD_SCHEMA,
     ),
 }
 
 
 class ConfigFlowHandler(SchemaConfigFlowHandler, domain=DOMAIN):
-    """Handle a config or options flow for Threshold."""
+    """Handle a config or options flow for state webhook."""
     VERSION = 1
     MINOR_VERSION = 1
 
