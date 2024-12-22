@@ -12,7 +12,7 @@ Essentially you set up a webhook URL, with optionally authorization headers.
 In addition you configure the entities which you want to track and which data to include in the payload.
 The component will listen to state changes of relevant entities and will call your webhook accordingly.
 
-You can use it for example to sent HA state data to tools like Zapier or IFTT to do all kind of automations.
+You can use it for example to sent HA state data to tools like [Zapier](https://zapier.com/) or [IFTT](https://ifttt.com/) to do all kind of automations.
 Or sent JSON data to any custom endpoint, the possibilities are endless.
 
 ## Installation
