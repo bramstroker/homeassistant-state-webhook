@@ -13,15 +13,13 @@ The component will listen to state changes of relevant entities and will call yo
 
 ### HACS (manually)
 
-Currently you'll need to add custom repository to HACS.
+Currently you'll need to add this integration as a custom repository in HACS.
 I will try to add this integration to HACS default repository, but this will take a lot of time looking at the big backlog.
 
-- In the HACS GUI, click three dots (top right), select "Custom repositories"
-- Enter the following repository URL: [https://github.com/bramstroker/homeassistant-state-webhook](https://github.com/bramstroker/homeassistant-state-webhook)
-- Category: Integration
-- Search for "state webhook"
-- Click and "Download"
-- Restart Home Assistant
+- Click the button below to open this repository in HACS:
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=bramstroker&repository=homeassistant-state-webhook&category=integration)
+- Click add and then the download button in the bottom right corner.
+- Restart Home Assistant and continue with the next section.
 
 ## Usage
 
