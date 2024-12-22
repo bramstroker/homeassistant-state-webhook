@@ -1,3 +1,4 @@
+import asyncio
 import fnmatch
 import logging
 from collections.abc import Mapping
@@ -26,6 +27,8 @@ from .const import (
 )
 
 _LOGGER = logging.getLogger(__name__)
+
+RETRY_DELAY = 5
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
@@ -76,12 +79,17 @@ async def register_webhook(hass: HomeAssistant, entry: ConfigEntry) -> None:
             new_state.state,
         )
 
-        await call_webhook(
-            session,
-            webhook_url,
-            headers,
-            build_payload(entry.options, entity_id, old_state, new_state),
-        )
+        result = False
+        retry_count = 0
+        while not result and retry_count < 3:
+            result = await call_webhook(
+                session,
+                webhook_url,
+                headers,
+                build_payload(entry.options, entity_id, old_state, new_state),
+            )
+            retry_count += 1
+            await asyncio.sleep(RETRY_DELAY)
 
     async_track_state_change_event(hass, entities_to_track, handle_state_change)
 
