@@ -29,7 +29,8 @@
       "payload": {
         "description": "Configure which data to send in the webhook JSON payload",
         "data": {
-            "include_attributes": "Include attributes"
+            "payload_old_state": "Include old state",
+            "payload_attributes": "Include attributes"
         },
         "title": "JSON payload"
       }
@@ -40,7 +41,8 @@
       "init": {
         "menu_options": {
           "webhook": "Webhook options",
-          "filter": "Filter options"
+          "filter": "Entity filter options",
+          "payload": "Payload options"
         }
       },
       "webhook": {
@@ -71,7 +73,8 @@
       "payload": {
         "description": "Configure which data to send in the webhook JSON payload",
         "data": {
-            "include_attributes": "Include attributes"
+            "payload_old_state": "Include old state",
+            "payload_attributes": "Include attributes"
         },
         "title": "JSON payload"
       }

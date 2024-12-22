@@ -16,8 +16,8 @@ from .const import (
     CONF_ENTITY_ID_GLOB,
     CONF_ENTITY_LABELS,
     CONF_FILTER_MODE,
-    CONF_INCLUDE_ATTRIBUTES,
-    CONF_WEBHOOK_AUTH_HEADER,
+    CONF_PAYLOAD_ATTRIBUTES,
+    CONF_PAYLOAD_OLD_STATE, CONF_WEBHOOK_AUTH_HEADER,
     CONF_WEBHOOK_HEADERS,
     CONF_WEBHOOK_URL,
     FilterMode,
@@ -89,11 +89,14 @@ def build_payload(options: Mapping[str, Any], entity_id: str, old_state: State |
     payload = {
         "entity_id": entity_id,
         "time": new_state.last_updated.isoformat(),
-        "old_state": old_state.state if old_state else None,
         "new_state": new_state.state if new_state else None,
     }
 
-    include_attributes = bool(options.get(CONF_INCLUDE_ATTRIBUTES))
+    include_old_state = bool(options.get(CONF_PAYLOAD_OLD_STATE, True))
+    if include_old_state:
+        payload["old_state"] = old_state.state if old_state else None
+
+    include_attributes = bool(options.get(CONF_PAYLOAD_ATTRIBUTES, False))
     if include_attributes:
         payload["new_state_attributes"] = new_state.attributes
 

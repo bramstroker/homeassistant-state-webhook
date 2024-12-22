@@ -33,7 +33,8 @@ from .const import (
     CONF_ENTITY_ID,
     CONF_ENTITY_ID_GLOB,
     CONF_ENTITY_LABELS,
-    CONF_INCLUDE_ATTRIBUTES,
+    CONF_PAYLOAD_ATTRIBUTES,
+    CONF_PAYLOAD_OLD_STATE,
     CONF_WEBHOOK_AUTH_HEADER,
     CONF_WEBHOOK_HEADERS,
     CONF_WEBHOOK_URL,
@@ -74,7 +75,8 @@ FILTER_SCHEMA = vol.Schema(
 
 PAYLOAD_SCHEMA = vol.Schema(
     {
-        vol.Required(CONF_INCLUDE_ATTRIBUTES): BooleanSelector(),
+        vol.Required(CONF_PAYLOAD_OLD_STATE, default=True): BooleanSelector(),
+        vol.Required(CONF_PAYLOAD_ATTRIBUTES, default=False): BooleanSelector(),
     },
 )
 
