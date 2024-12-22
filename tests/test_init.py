@@ -1,6 +1,6 @@
 from collections.abc import Mapping
 from typing import Any
-from unittest.mock import ANY, patch
+from unittest.mock import ANY
 
 import pytest
 from aioresponses import aioresponses
@@ -9,8 +9,7 @@ from homeassistant.core import HomeAssistant, State
 from homeassistant.helpers.entity_registry import RegistryEntry
 from pytest_homeassistant_custom_component.common import MockConfigEntry, mock_registry
 
-from custom_components.state_webhook import CONF_ENTITY_DOMAIN, CONF_ENTITY_ID, CONF_WEBHOOK_URL, async_setup_entry, \
-    build_payload
+from custom_components.state_webhook import CONF_ENTITY_DOMAIN, CONF_ENTITY_ID, CONF_WEBHOOK_URL, async_setup_entry, build_payload
 from custom_components.state_webhook.const import CONF_PAYLOAD_ATTRIBUTES, CONF_PAYLOAD_OLD_STATE, DOMAIN
 
 DEFAULT_WEBHOOK_URL = "https://example.com/webhook"
@@ -60,7 +59,7 @@ async def test_state_webhook_triggered_successfully(hass: HomeAssistant) -> None
             headers={},
         )
 
-async def test_retry_when_webhook_unavailable(hass: HomeAssistant):
+async def test_retry_when_webhook_unavailable(hass: HomeAssistant) -> None:
     hass.states.async_set("input_boolean.test", "off")
     await hass.async_block_till_done()
 

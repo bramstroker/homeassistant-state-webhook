@@ -9,9 +9,12 @@ CONF_ENTITY_LABELS = "entity_labels"
 CONF_FILTER_MODE = "filter_mode"
 CONF_PAYLOAD_ATTRIBUTES = "payload_attributes"
 CONF_PAYLOAD_OLD_STATE = "payload_old_state"
+CONF_RETRY_LIMIT = "retry_limit"
 CONF_WEBHOOK_URL = "webhook_url"
 CONF_WEBHOOK_HEADERS = "webhook_headers"
 CONF_WEBHOOK_AUTH_HEADER = "webhook_auth_header"
+
+DEFAULT_RETRY_LIMIT = 3
 
 class FilterMode(StrEnum):
     OR = "or"

@@ -20,6 +20,9 @@ from homeassistant.helpers.selector import (
     EntitySelectorConfig,
     LabelSelector,
     LabelSelectorConfig,
+    NumberSelector,
+    NumberSelectorConfig,
+    NumberSelectorMode,
     ObjectSelector,
     SelectSelector,
     SelectSelectorConfig,
@@ -35,9 +38,11 @@ from .const import (
     CONF_ENTITY_LABELS,
     CONF_PAYLOAD_ATTRIBUTES,
     CONF_PAYLOAD_OLD_STATE,
+    CONF_RETRY_LIMIT,
     CONF_WEBHOOK_AUTH_HEADER,
     CONF_WEBHOOK_HEADERS,
     CONF_WEBHOOK_URL,
+    DEFAULT_RETRY_LIMIT,
     DOMAIN,
     FilterMode,
 )
@@ -47,6 +52,7 @@ WEBHOOK_OPTIONS_SCHEMA = vol.Schema(
         vol.Required(CONF_WEBHOOK_URL): TextSelector(),
         vol.Optional(CONF_WEBHOOK_AUTH_HEADER): TextSelector(),
         vol.Optional(CONF_WEBHOOK_HEADERS): ObjectSelector(),
+        vol.Optional(CONF_RETRY_LIMIT, default=DEFAULT_RETRY_LIMIT): NumberSelector(NumberSelectorConfig(mode=NumberSelectorMode.BOX)),
     },
 )
 

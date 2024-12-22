@@ -20,9 +20,11 @@ from .const import (
     CONF_FILTER_MODE,
     CONF_PAYLOAD_ATTRIBUTES,
     CONF_PAYLOAD_OLD_STATE,
+    CONF_RETRY_LIMIT,
     CONF_WEBHOOK_AUTH_HEADER,
     CONF_WEBHOOK_HEADERS,
     CONF_WEBHOOK_URL,
+    DEFAULT_RETRY_LIMIT,
     FilterMode,
 )
 
@@ -50,6 +52,7 @@ async def register_webhook(hass: HomeAssistant, entry: ConfigEntry) -> None:
 
     webhook_url = str(entry.options.get(CONF_WEBHOOK_URL))
     headers = prepare_headers(entry.options)
+    retry_limit = int(entry.options.get(CONF_RETRY_LIMIT, DEFAULT_RETRY_LIMIT))
 
     _LOGGER.debug("Start webhook tracking using URL: %s", webhook_url)
     _LOGGER.debug("Tracking the following entities: %s", entities_to_track)
@@ -81,7 +84,7 @@ async def register_webhook(hass: HomeAssistant, entry: ConfigEntry) -> None:
 
         result = False
         retry_count = 0
-        while not result and retry_count < 3:
+        while not result and retry_count < retry_limit:
             result = await call_webhook(
                 session,
                 webhook_url,
