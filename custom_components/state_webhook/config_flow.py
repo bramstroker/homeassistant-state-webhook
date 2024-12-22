@@ -114,36 +114,36 @@ async def validate_webhook(handler: SchemaCommonFlowHandler, user_input: dict[st
 
 
 CONFIG_FLOW = {
-    Step.USER: SchemaFlowFormStep(
+    str(Step.USER): SchemaFlowFormStep(
         WEBHOOK_SCHEMA,
         next_step=Step.FILTER,
         validate_user_input=validate_webhook,
     ),
-    Step.FILTER: SchemaFlowFormStep(
+    str(Step.FILTER): SchemaFlowFormStep(
         FILTER_SCHEMA,
         next_step=Step.PAYLOAD,
     ),
-    Step.PAYLOAD: SchemaFlowFormStep(
+    str(Step.PAYLOAD): SchemaFlowFormStep(
         PAYLOAD_SCHEMA,
     ),
 }
 
 OPTIONS_FLOW = {
-    Step.INIT: SchemaFlowMenuStep(
+    str(Step.INIT): SchemaFlowMenuStep(
         options={
             Step.WEBHOOK,
             Step.FILTER,
             Step.PAYLOAD,
         },
     ),
-    Step.WEBHOOK: SchemaFlowFormStep(
+    str(Step.WEBHOOK): SchemaFlowFormStep(
         WEBHOOK_OPTIONS_SCHEMA,
         validate_user_input=validate_webhook,
     ),
-    Step.FILTER: SchemaFlowFormStep(
+    str(Step.FILTER): SchemaFlowFormStep(
         FILTER_SCHEMA,
     ),
-    Step.PAYLOAD: SchemaFlowFormStep(
+    str(Step.PAYLOAD): SchemaFlowFormStep(
         PAYLOAD_SCHEMA,
     ),
 }
