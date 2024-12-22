@@ -30,3 +30,8 @@ jobs:
             -p no:sugar \
             tests
           poetry run coverage lcov
+      - name: Upload Coverage Results
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.github_token }}
+          path-to-lcov: coverage.lcov
