@@ -54,7 +54,7 @@ async def register_webhook(hass: HomeAssistant, entry: ConfigEntry) -> None:
     # Create a single http session for reuse
     session = aiohttp.ClientSession()
 
-    async def cleanup_session(event):
+    async def cleanup_session(_: Any) -> None:  # noqa ANN401
         """Cleanup the aiohttp session on shutdown."""
         await session.close()
 
@@ -80,7 +80,7 @@ async def register_webhook(hass: HomeAssistant, entry: ConfigEntry) -> None:
             session,
             webhook_url,
             headers,
-            build_payload(entry.options, entity_id, old_state, new_state)
+            build_payload(entry.options, entity_id, old_state, new_state),
         )
 
     async_track_state_change_event(hass, entities_to_track, handle_state_change)
