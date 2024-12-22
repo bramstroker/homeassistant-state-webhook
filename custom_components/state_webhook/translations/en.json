@@ -25,6 +25,13 @@
           "entity_id_glob": "Entity ID glob"
         },
         "title": "Define which entities to track states for"
+      },
+      "payload": {
+        "description": "Configure which data to send in the webhook JSON payload",
+        "data": {
+            "include_attributes": "Include attributes"
+        },
+        "title": "JSON payload"
       }
     }
   },
@@ -60,6 +67,13 @@
           "entity_id_glob": "Entity ID glob"
         },
         "title": "Define which entities to track states for"
+      },
+      "payload": {
+        "description": "Configure which data to send in the webhook JSON payload",
+        "data": {
+            "include_attributes": "Include attributes"
+        },
+        "title": "JSON payload"
       }
     }
   }

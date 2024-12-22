@@ -13,7 +13,7 @@ from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.state_webhook import CONF_ENTITY_DOMAIN, CONF_ENTITY_ID, CONF_FILTER_MODE, CONF_WEBHOOK_URL
 from custom_components.state_webhook.config_flow import validate_webhook
-from custom_components.state_webhook.const import DOMAIN, FilterMode
+from custom_components.state_webhook.const import CONF_INCLUDE_ATTRIBUTES, DOMAIN, FilterMode
 
 
 async def test_validate_url() -> None:
@@ -72,8 +72,18 @@ async def test_config_flow(hass: HomeAssistant) -> None:
                 CONF_ENTITY_ID: ["sensor.test"],
             },
         )
+        assert result["type"] is FlowResultType.FORM
+
+        result = await hass.config_entries.flow.async_configure(
+            result["flow_id"],
+            {
+                CONF_INCLUDE_ATTRIBUTES: True,
+            },
+        )
+
         assert result["type"] is FlowResultType.CREATE_ENTRY
         assert result["options"] == {
+            CONF_INCLUDE_ATTRIBUTES: True,
             CONF_NAME: "Test",
             CONF_WEBHOOK_URL: "http://example.com",
             CONF_FILTER_MODE: FilterMode.OR,
@@ -101,6 +111,7 @@ async def test_options_flow(hass: HomeAssistant) -> None:
     assert result["step_id"] == "init"
     assert result["menu_options"] == {
         "webhook",
+        "payload",
         "filter",
     }
 

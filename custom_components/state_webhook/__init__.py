@@ -6,7 +6,7 @@ from typing import Any
 import aiohttp
 import homeassistant.helpers.entity_registry as er
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import Event, EventStateChangedData, HomeAssistant, callback
+from homeassistant.core import Event, EventStateChangedData, HomeAssistant, State, callback
 from homeassistant.helpers.event import async_track_state_change_event
 from homeassistant.helpers.start import async_at_started
 
@@ -16,7 +16,7 @@ from .const import (
     CONF_ENTITY_ID_GLOB,
     CONF_ENTITY_LABELS,
     CONF_FILTER_MODE,
-    CONF_WEBHOOK_AUTH_HEADER,
+    CONF_INCLUDE_ATTRIBUTES, CONF_WEBHOOK_AUTH_HEADER,
     CONF_WEBHOOK_HEADERS,
     CONF_WEBHOOK_URL,
     FilterMode,
@@ -61,12 +61,7 @@ async def register_webhook(hass: HomeAssistant, entry: ConfigEntry) -> None:
             new_state.state if new_state else "None",
         )
 
-        payload = {
-            "entity_id": entity_id,
-            "time": new_state.last_updated.isoformat(),
-            "old_state": old_state.state if old_state else None,
-            "new_state": new_state.state if new_state else None,
-        }
+        payload = build_payload(entry.options, entity_id, old_state, new_state)
 
         async with aiohttp.ClientSession() as session:
             await call_webhook(session, webhook_url, headers, payload)
@@ -87,6 +82,21 @@ async def call_webhook(session: aiohttp.ClientSession, webhook_url: str, headers
     except Exception as e:  # noqa BLE001
         _LOGGER.error("Error calling webhook: %s", e)
     return False
+
+def build_payload(options: Mapping[str, Any], entity_id: str, old_state: State | None, new_state: State | None) -> dict[str, Any]:
+    """Build payload for webhook request"""
+    payload = {
+        "entity_id": entity_id,
+        "time": new_state.last_updated.isoformat(),
+        "old_state": old_state.state if old_state else None,
+        "new_state": new_state.state if new_state else None,
+    }
+
+    include_attributes = bool(options.get(CONF_INCLUDE_ATTRIBUTES))
+    if include_attributes:
+        payload["new_state_attributes"] = new_state.attributes
+
+    return payload
 
 def prepare_headers(options: Mapping[str, Any]) -> dict[str, str]:
     """Prepare headers for webhook request"""
