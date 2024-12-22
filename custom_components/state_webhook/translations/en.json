@@ -25,6 +25,14 @@
           "entity_id_glob": "Entity ID glob"
         },
         "title": "Define which entities to track states for"
+      },
+      "payload": {
+        "description": "Configure which data to send in the webhook JSON payload",
+        "data": {
+            "payload_old_state": "Include old state",
+            "payload_attributes": "Include attributes"
+        },
+        "title": "JSON payload"
       }
     }
   },
@@ -33,7 +41,8 @@
       "init": {
         "menu_options": {
           "webhook": "Webhook options",
-          "filter": "Filter options"
+          "filter": "Entity filter options",
+          "payload": "Payload options"
         }
       },
       "webhook": {
@@ -60,6 +69,14 @@
           "entity_id_glob": "Entity ID glob"
         },
         "title": "Define which entities to track states for"
+      },
+      "payload": {
+        "description": "Configure which data to send in the webhook JSON payload",
+        "data": {
+            "payload_old_state": "Include old state",
+            "payload_attributes": "Include attributes"
+        },
+        "title": "JSON payload"
       }
     }
   }
