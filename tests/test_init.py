@@ -1,4 +1,5 @@
-from typing import Any, Mapping
+from collections.abc import Mapping
+from typing import Any
 from unittest.mock import ANY
 
 import pytest
@@ -64,17 +65,17 @@ async def test_state_webhook_triggered_successfully(hass: HomeAssistant) -> None
     [
         (
             {CONF_PAYLOAD_ATTRIBUTES: True},
-            {"entity_id": "input_boolean.test", "time": ANY, "old_state": "on", "new_state": "off", "new_state_attributes": {"attr": "value"}}
+            {"entity_id": "input_boolean.test", "time": ANY, "old_state": "on", "new_state": "off", "new_state_attributes": {"attr": "value"}},
         ),
         (
             {CONF_PAYLOAD_ATTRIBUTES: False},
-            {"entity_id": "input_boolean.test", "time": ANY, "old_state": "on", "new_state": "off"}
+            {"entity_id": "input_boolean.test", "time": ANY, "old_state": "on", "new_state": "off"},
         ),
         (
             {CONF_PAYLOAD_OLD_STATE: False},
-            {"entity_id": "input_boolean.test", "time": ANY, "new_state": "off"}
+            {"entity_id": "input_boolean.test", "time": ANY, "new_state": "off"},
         ),
-    ]
+    ],
 )
 async def test_build_payload(options: Mapping[str, bool], expected_payload: dict[str, Any]) -> None:
     old_state = State("input_boolean.test", STATE_ON, {"attr": "value"})

@@ -11,8 +11,7 @@ from homeassistant.data_entry_flow import FlowResultType
 from homeassistant.helpers.schema_config_entry_flow import SchemaFlowError
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.state_webhook import CONF_ENTITY_DOMAIN, CONF_ENTITY_ID, CONF_FILTER_MODE, \
-    CONF_PAYLOAD_OLD_STATE, CONF_WEBHOOK_URL
+from custom_components.state_webhook import CONF_ENTITY_DOMAIN, CONF_ENTITY_ID, CONF_FILTER_MODE, CONF_PAYLOAD_OLD_STATE, CONF_WEBHOOK_URL
 from custom_components.state_webhook.config_flow import validate_webhook
 from custom_components.state_webhook.const import CONF_PAYLOAD_ATTRIBUTES, DOMAIN, FilterMode
 

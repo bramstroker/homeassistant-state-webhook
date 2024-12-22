@@ -17,7 +17,8 @@ from .const import (
     CONF_ENTITY_LABELS,
     CONF_FILTER_MODE,
     CONF_PAYLOAD_ATTRIBUTES,
-    CONF_PAYLOAD_OLD_STATE, CONF_WEBHOOK_AUTH_HEADER,
+    CONF_PAYLOAD_OLD_STATE,
+    CONF_WEBHOOK_AUTH_HEADER,
     CONF_WEBHOOK_HEADERS,
     CONF_WEBHOOK_URL,
     FilterMode,
@@ -55,11 +56,14 @@ async def register_webhook(hass: HomeAssistant, entry: ConfigEntry) -> None:
         old_state = event.data.get("old_state")
         new_state = event.data.get("new_state")
 
+        if new_state is None:
+            return
+
         _LOGGER.debug(
             "State change detected for %s: %s -> %s",
             entity_id,
             old_state.state if old_state else "None",
-            new_state.state if new_state else "None",
+            new_state.state,
         )
 
         payload = build_payload(entry.options, entity_id, old_state, new_state)
@@ -84,17 +88,17 @@ async def call_webhook(session: aiohttp.ClientSession, webhook_url: str, headers
         _LOGGER.error("Error calling webhook: %s", e)
     return False
 
-def build_payload(options: Mapping[str, Any], entity_id: str, old_state: State | None, new_state: State | None) -> dict[str, Any]:
+def build_payload(options: Mapping[str, Any], entity_id: str, old_state: State | None, new_state: State) -> dict[str, Any]:
     """Build payload for webhook request"""
     payload = {
         "entity_id": entity_id,
         "time": new_state.last_updated.isoformat(),
-        "new_state": new_state.state if new_state else None,
+        "new_state": new_state.state,
     }
 
     include_old_state = bool(options.get(CONF_PAYLOAD_OLD_STATE, True))
-    if include_old_state:
-        payload["old_state"] = old_state.state if old_state else None
+    if include_old_state and old_state:
+        payload["old_state"] = old_state.state
 
     include_attributes = bool(options.get(CONF_PAYLOAD_ATTRIBUTES, False))
     if include_attributes:
