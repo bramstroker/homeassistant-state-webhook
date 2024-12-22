@@ -6,8 +6,7 @@ from homeassistant.core import HomeAssistant, State
 from homeassistant.helpers.entity_registry import RegistryEntry
 from pytest_homeassistant_custom_component.common import MockConfigEntry, mock_registry
 
-from custom_components.state_webhook import CONF_ENTITY_DOMAIN, CONF_INCLUDE_ATTRIBUTES, CONF_WEBHOOK_URL, \
-    async_setup_entry, build_payload
+from custom_components.state_webhook import CONF_ENTITY_DOMAIN, CONF_INCLUDE_ATTRIBUTES, CONF_WEBHOOK_URL, async_setup_entry, build_payload
 from custom_components.state_webhook.const import DOMAIN
 
 DEFAULT_WEBHOOK_URL = "https://example.com/webhook"

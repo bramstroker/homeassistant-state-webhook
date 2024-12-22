@@ -14,7 +14,8 @@ from homeassistant.helpers.schema_config_entry_flow import (
     SchemaFlowMenuStep,
 )
 from homeassistant.helpers.selector import (
-    BooleanSelector, EntitySelector,
+    BooleanSelector,
+    EntitySelector,
     EntitySelectorConfig,
     LabelSelector,
     LabelSelectorConfig,
@@ -31,7 +32,8 @@ from .const import (
     CONF_ENTITY_ID,
     CONF_ENTITY_ID_GLOB,
     CONF_ENTITY_LABELS,
-    CONF_INCLUDE_ATTRIBUTES, CONF_WEBHOOK_AUTH_HEADER,
+    CONF_INCLUDE_ATTRIBUTES,
+    CONF_WEBHOOK_AUTH_HEADER,
     CONF_WEBHOOK_HEADERS,
     CONF_WEBHOOK_URL,
     DOMAIN,
