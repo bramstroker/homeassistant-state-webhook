@@ -52,3 +52,6 @@ Currently the component will sent following payload structure using POST request
   "new_state": "not_home"
 }
 ```
+
+You can also add the `new_state_attributes` using a toggle in the configuration screen.
+And omit the `old_state` if you don't need it.
