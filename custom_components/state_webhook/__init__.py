@@ -9,6 +9,7 @@ import homeassistant.helpers.entity_registry as er
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import EVENT_HOMEASSISTANT_STOP
 from homeassistant.core import Event, EventStateChangedData, HomeAssistant, State, callback
+from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.event import async_track_state_change_event
 from homeassistant.helpers.start import async_at_started
 
@@ -57,14 +58,7 @@ async def register_webhook(hass: HomeAssistant, entry: ConfigEntry) -> None:
     _LOGGER.debug("Start webhook tracking using URL: %s", webhook_url)
     _LOGGER.debug("Tracking the following entities: %s", entities_to_track)
 
-    # Create a single http session for reuse
-    session = aiohttp.ClientSession()
-
-    async def cleanup_session(_: Any) -> None:  # noqa ANN401
-        """Cleanup the aiohttp session on shutdown."""
-        await session.close()
-
-    hass.bus.async_listen_once(EVENT_HOMEASSISTANT_STOP, cleanup_session)
+    session = async_get_clientsession(hass)
 
     @callback
     async def handle_state_change(event: Event[EventStateChangedData]) -> None:
