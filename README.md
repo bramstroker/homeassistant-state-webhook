@@ -1,5 +1,4 @@
 ![Version](https://img.shields.io/github/v/release/bramstroker/homeassistant-state-webhook?style=for-the-badge)
-![Downloads](https://img.shields.io/github/downloads/bramstroker/homeassistant-state-webhook/total?style=for-the-badge)
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-41BDF5.svg?style=for-the-badge)](https://github.com/hacs/integration)
 ![hacs installs](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Flauwbier.nl%2Fhacs%2Fstate_webhook&style=for-the-badge)
 [![Code style: MyPy](https://img.shields.io/badge/type%20checked-mypy-blue.svg?style=for-the-badge)](https://mypy-lang.org/)
